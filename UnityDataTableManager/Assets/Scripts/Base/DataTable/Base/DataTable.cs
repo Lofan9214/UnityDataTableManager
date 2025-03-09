@@ -17,5 +17,15 @@ public abstract class DataTable
         }
     }
 
+    public static void SaveCsv<T>(string path, List<T> data)
+    {
+        using (var writer = new StreamWriter(path))
+        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        {
+            csv.WriteRecords<T>(data);
+        }
+    }
+
     public abstract void Load(string path);
+    public abstract void Save(string path);
 }

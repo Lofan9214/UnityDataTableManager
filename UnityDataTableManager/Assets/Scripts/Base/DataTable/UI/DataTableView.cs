@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -57,5 +58,34 @@ public class DataTableView : MonoBehaviour
         {
             AddRow(rowsData[i]);
         }
+    }
+
+    public List<T> GetData<T>() where T : new()
+    {
+        var dataType = typeof(T);
+        var properties = dataType.GetProperties();
+        List<T> data = new List<T>();
+
+        for (int i = 0; i < rows.Count; ++i)
+        {
+            T datum = new T();
+            for (int j = 0; j < properties.Length; ++j)
+            {
+                if (properties[j].PropertyType == typeof(int))
+                {
+                    properties[j].SetValue(datum, int.Parse(rows[i].cells[j].CellText));
+                }
+                else if (properties[j].PropertyType == typeof(float))
+                {
+                    properties[j].SetValue(datum, float.Parse(rows[i].cells[j].CellText));
+                }
+                else if (properties[j].PropertyType == typeof(string))
+                {
+                    properties[j].SetValue(datum, rows[i].cells[j].CellText);
+                }
+            }
+            data.Add(datum);
+        }
+        return data;
     }
 }

@@ -17,8 +17,10 @@ public class DataTableViewer : MonoBehaviour
 
     private void Awake()
     {
+
         SetStringTable();
-        SetEventTable();
+        //SetEventTable();
+        SetTable<EventTable, int, EventTable.Data>(DataTableManager.EventTable.GetAllData());
 
         tableDropdown.value = 0;
         tableDropdown.RefreshShownValue();
@@ -45,22 +47,18 @@ public class DataTableViewer : MonoBehaviour
         }
     }
 
-    private void SetEventTable()
+    private void SetTable<Table, TKey, TData>(Dictionary<TKey, TData> dict) where Table : DataTable
     {
-        var tableView = Instantiate(dataTableViewPrefab, this.tableView);
-
-        var eventTableData = DataTableManager.EventTable.GetAllData();
-
-        var tableType = typeof(EventTable);
-        var dataType = typeof(EventTable.Data);
-        var properties = typeof(EventTable.Data).GetProperties();
+        var tableType = typeof(Table);
+        var dataType = typeof(TData);
+        var properties = typeof(TData).GetProperties();
 
         AddDropDownOption(tableType.Name);
-
+        var tableView = Instantiate(dataTableViewPrefab, this.tableView);
         views.Add(tableType.Name, tableView);
         tableView.SetColumns(properties.Select(p => p.Name).ToArray());
 
-        foreach (var data in eventTableData)
+        foreach (var data in dict)
         {
             string[] values = new string[properties.Length];
 
@@ -71,6 +69,11 @@ public class DataTableViewer : MonoBehaviour
 
             tableView.AddRow(values);
         }
+    }
+
+    public void SaveTable()
+    {
+        DataTableManager.EventTable.Save(DataTableIds.Event, views["EventTable"].GetData<EventTable.Data>());
     }
 
     private void AddDropDownOption(string name)

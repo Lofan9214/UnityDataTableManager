@@ -9,7 +9,7 @@ public class ResourceTable : DataTable
     {
         public int ID { get; set; }
         public int NameId { get; set; }
-        public ResourceType Type { get; set; }
+        public int Type { get; set; }
         public int StartQuantity { get; set; }
         public int TurnUsage { get; set; }
     }
@@ -48,12 +48,17 @@ public class ResourceTable : DataTable
 
     public Data Get(ResourceType type)
     {
-        var data = GetValues().Where(p => p.Type == type).FirstOrDefault();
+        var data = GetValues().Where(p => p.Type == (int)type).FirstOrDefault();
         return data;
     }
 
     public Data[] GetValues()
     {
         return dict.Values.ToArray();
+    }
+
+    public override void Save(string path)
+    {
+        SaveCsv(path, dict.Values.ToList());
     }
 }

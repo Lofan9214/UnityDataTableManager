@@ -64,4 +64,16 @@ public class EventTable : DataTable
     {
         return dict.Values.ToArray();
     }
+
+    public void Save(string fileName, List<Data> data)
+    {
+        string path = string.Format(FormatPath, fileName);
+        SaveCsv(path, data);
+    }
+
+    public override void Save(string fileName)
+    {
+        string path = string.Format(FormatPath, fileName);
+        SaveCsv(path, dict.Values.ToList());
+    }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StringTable : DataTable
@@ -42,5 +43,13 @@ public class StringTable : DataTable
         return dict[key];
     }
 
-    public Dictionary<int, string> GetAllData() => dict;
+    public Dictionary<int, string> GetAllData()
+    {
+        return dict;
+    }
+
+    public override void Save(string path)
+    {
+        SaveCsv(path, dict.Values.ToList());
+    }
 }
