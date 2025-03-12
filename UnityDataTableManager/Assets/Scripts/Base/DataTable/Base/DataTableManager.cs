@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class DataTableManager
 {
-    private static readonly Dictionary<string, DataTable> tables = new Dictionary<string, DataTable>();
+    public static Dictionary<string, DataTable> Tables { get; private set; } = new Dictionary<string, DataTable>();
 
     static DataTableManager()
     {
@@ -15,7 +15,7 @@ public static class DataTableManager
         {
             var table = new StringTable();
             table.Load(id);
-            tables.Add(id, table);
+            Tables.Add(id, table);
         }
 #else
         var table = new StringTable();
@@ -27,22 +27,22 @@ public static class DataTableManager
         var resourceTable = new ResourceTable();
         var resourceTableId = DataTableIds.Resource;
         resourceTable.Load(resourceTableId);
-        tables.Add(resourceTableId, resourceTable);
+        Tables.Add(resourceTableId, resourceTable);
 
         var eventTable = new EventTable();
         var eventTableId = DataTableIds.Event;
         eventTable.Load(eventTableId);
-        tables.Add(eventTableId, eventTable);
+        Tables.Add(eventTableId, eventTable);
     }
 
     public static T Get<T>(string id) where T : DataTable
     {
-        if (!tables.ContainsKey(id))
+        if (!Tables.ContainsKey(id))
         {
             Debug.LogError("Table Not Exists");
             return null;
         }
-        return tables[id] as T;
+        return Tables[id] as T;
     }
 
     public static StringTable StringTable

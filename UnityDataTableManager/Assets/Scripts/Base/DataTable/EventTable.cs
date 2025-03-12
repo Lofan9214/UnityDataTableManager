@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EventTable : DataTable
 {
-    public class Data
+    public class Data : DataTableData
     {
         public int ID { get; set; }
         public int Type { get; set; }
@@ -24,6 +24,19 @@ public class EventTable : DataTable
         /// 타겟값#수량_타겟값#수량 생각중
         /// </summary>
         public string NeglectResult { get; set; }
+
+        public override void Set(string[] argument)
+        {
+            ID = int.Parse(argument[0]);
+            Type = int.Parse(argument[1]);
+            Script = int.Parse(argument[2]);
+            RelativeProbability = int.Parse(argument[3]);
+            DetailedType = argument[4];
+            AcceptScript = int.Parse(argument[5]);
+            AcceptResult = argument[6];
+            NeglectScript = int.Parse(argument[7]);
+            NeglectResult = argument[8];
+        }
     }
 
     private Dictionary<int, Data> dict = new Dictionary<int, Data>();
@@ -65,15 +78,36 @@ public class EventTable : DataTable
         return dict.Values.ToArray();
     }
 
-    public void Save(string fileName, List<Data> data)
-    {
-        string path = string.Format(FormatPath, fileName);
-        SaveCsv(path, data);
-    }
-
     public override void Save(string fileName)
     {
         string path = string.Format(FormatPath, fileName);
         SaveCsv(path, dict.Values.ToList());
+    }
+
+    public override void Set(List<string[]> data)
+    {
+        var properties = typeof(Data).GetProperties();
+        var dictionary = new Dictionary<int, Data>();
+        for (int i = 0; i < data.Count; ++i)
+        {
+            Data datum = new Data();
+            datum.Set(data[i]);
+            dictionary.Add(datum.ID, datum);
+        }
+
+        dict = dictionary;
+    }
+
+    public override Dictionary<int, DataTableData> TableData
+    {
+        get
+        {
+            var wrapDict = new Dictionary<int, DataTableData>();
+            foreach (var item in dict)
+            {
+                wrapDict.Add(item.Key, item.Value);
+            }
+            return wrapDict;
+        }
     }
 }

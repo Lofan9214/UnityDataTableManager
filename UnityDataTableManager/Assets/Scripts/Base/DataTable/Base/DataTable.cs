@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using UnityEngine;
 
 public abstract class DataTable
 {
     public static readonly string FormatPath = "Tables/{0}";
+
+    public abstract Dictionary<int, DataTableData> TableData { get; }
 
     public static List<T> LoadCsv<T>(string csv)
     {
@@ -28,4 +31,6 @@ public abstract class DataTable
 
     public abstract void Load(string path);
     public abstract void Save(string path);
+
+    public abstract void Set(List<string[]> data);
 }

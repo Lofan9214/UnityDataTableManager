@@ -60,29 +60,29 @@ public class DataTableView : MonoBehaviour
         }
     }
 
-    public List<T> GetData<T>() where T : new()
+    public List<string[]> GetData()
     {
-        var dataType = typeof(T);
-        var properties = dataType.GetProperties();
-        List<T> data = new List<T>();
+        List<string[]> data = new List<string[]>();
 
         for (int i = 0; i < rows.Count; ++i)
         {
-            T datum = new T();
-            for (int j = 0; j < properties.Length; ++j)
+            var datum = new string[columnCount];
+
+            for (int j = 0; j < columnCount; ++j)
             {
-                if (properties[j].PropertyType == typeof(int))
-                {
-                    properties[j].SetValue(datum, int.Parse(rows[i].cells[j].CellText));
-                }
-                else if (properties[j].PropertyType == typeof(float))
-                {
-                    properties[j].SetValue(datum, float.Parse(rows[i].cells[j].CellText));
-                }
-                else if (properties[j].PropertyType == typeof(string))
-                {
-                    properties[j].SetValue(datum, rows[i].cells[j].CellText);
-                }
+                datum[i] = rows[i].cells[j].CellText;
+                //if (properties[j].PropertyType == typeof(int))
+                //{
+                //    properties[j].SetValue(datum, int.Parse(rows[i].cells[j].CellText));
+                //}
+                //else if (properties[j].PropertyType == typeof(float))
+                //{
+                //    properties[j].SetValue(datum, float.Parse(rows[i].cells[j].CellText));
+                //}
+                //else if (properties[j].PropertyType == typeof(string))
+                //{
+                //    properties[j].SetValue(datum, rows[i].cells[j].CellText);
+                //}
             }
             data.Add(datum);
         }

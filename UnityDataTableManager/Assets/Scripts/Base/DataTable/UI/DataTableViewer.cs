@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,49 +15,31 @@ public class DataTableViewer : MonoBehaviour
 
     private Dictionary<string, DataTableView> views = new Dictionary<string, DataTableView>();
 
+    private DataTableView currentView;
     private int currentIndex;
 
     private void Awake()
     {
-
-        SetStringTable();
-        //SetEventTable();
-        SetTable<EventTable, int, EventTable.Data>(DataTableManager.EventTable.GetAllData());
+        foreach (var table in DataTableManager.Tables)
+        {
+            SetTable(table);
+        }
 
         tableDropdown.value = 0;
         tableDropdown.RefreshShownValue();
         OnDropDownChanged(0);
     }
 
-    private void SetStringTable()
+    private void SetTable(KeyValuePair<string, DataTable> table)
     {
-        var tableType = typeof(StringTable);
-        var dataType = typeof(StringTable.Data);
-        var properties = typeof(StringTable.Data).GetProperties();
+        var dict = table.Value.TableData;
+        var dataType = dict.Values.FirstOrDefault().GetType();
 
-        AddDropDownOption(tableType.Name);
+        var properties = dataType.GetProperties();
 
-        var stringtableview = Instantiate(dataTableViewPrefab, tableView);
-        var stringTableData = DataTableManager.StringTable.GetAllData();
-
-        views.Add(tableType.Name, stringtableview);
-        stringtableview.SetColumns(dataType.GetProperties().Select(p => p.Name).ToArray());
-
-        foreach (var data in stringTableData)
-        {
-            stringtableview.AddRow(new string[] { data.Key.ToString(), data.Value });
-        }
-    }
-
-    private void SetTable<Table, TKey, TData>(Dictionary<TKey, TData> dict) where Table : DataTable
-    {
-        var tableType = typeof(Table);
-        var dataType = typeof(TData);
-        var properties = typeof(TData).GetProperties();
-
-        AddDropDownOption(tableType.Name);
+        AddDropDownOption(table.Key);
         var tableView = Instantiate(dataTableViewPrefab, this.tableView);
-        views.Add(tableType.Name, tableView);
+        views.Add(table.Key, tableView);
         tableView.SetColumns(properties.Select(p => p.Name).ToArray());
 
         foreach (var data in dict)
@@ -69,11 +53,15 @@ public class DataTableViewer : MonoBehaviour
 
             tableView.AddRow(values);
         }
+        tableView.gameObject.SetActive(false);
     }
 
     public void SaveTable()
     {
-        DataTableManager.EventTable.Save(DataTableIds.Event, views["EventTable"].GetData<EventTable.Data>());
+        string tableName = tableDropdown.options[tableDropdown.value].text;
+        var table = DataTableManager.Get<DataTable>(tableDropdown.options[tableDropdown.value].text);
+        table.Set(currentView.GetData());
+        table.Save(tableName);
     }
 
     private void AddDropDownOption(string name)
@@ -85,11 +73,13 @@ public class DataTableViewer : MonoBehaviour
 
     public void OnDropDownChanged(int index)
     {
-        currentIndex = index;
-        foreach (var view in views)
+        if (currentView != null)
         {
-            view.Value.gameObject.SetActive(view.Key == tableDropdown.options[index].text);
+            currentView.gameObject.SetActive(false);
         }
+        currentIndex = index;
+        currentView = views[tableDropdown.options[index].text];
+        currentView.gameObject.SetActive(true);
     }
 
     public void ResetTable()
