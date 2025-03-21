@@ -23,6 +23,10 @@ public class ResourceTable : DataTable
             StartQuantity = int.Parse(argument[3]);
             TurnUsage = int.Parse(argument[4]);
         }
+        public override int GetID()
+        {
+            return ID;
+        }
     }
 
     private Dictionary<int, Data> dict = new Dictionary<int, Data>();
@@ -89,15 +93,12 @@ public class ResourceTable : DataTable
 
     public override void Set(List<string[]> data)
     {
-        var properties = typeof(Data).GetProperties();
         var dictionary = new Dictionary<int, Data>();
-        for (int i = 0; i < data.Count; ++i)
+        foreach (var item in data)
         {
-            Data datum = new Data();
-            datum.Set(data[i]);
+            var datum = CreateData<Data>(item);
             dictionary.Add(datum.ID, datum);
         }
-
         dict = dictionary;
     }
 }

@@ -15,6 +15,10 @@ public class StringTable : DataTable
             stringID = int.Parse(argument[0]);
             line = argument[1];
         }
+        public override int GetID()
+        {
+            return stringID;
+        }
     }
 
     private Dictionary<int, Data> dict = new Dictionary<int, Data>();
@@ -56,15 +60,12 @@ public class StringTable : DataTable
 
     public override void Set(List<string[]> data)
     {
-        var properties = typeof(Data).GetProperties();
         var dictionary = new Dictionary<int, Data>();
-        for (int i = 0; i < data.Count; ++i)
+        foreach (var item in data)
         {
-            Data datum = new Data();
-            datum.Set(data[i]);
-            dictionary.Add(datum.stringID, datum);
+            var datum = CreateData<Data>(item);
+            dictionary.Add(datum.GetID(), datum);
         }
-
         dict = dictionary;
     }
 

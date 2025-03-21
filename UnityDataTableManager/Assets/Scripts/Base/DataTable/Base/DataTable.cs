@@ -9,7 +9,7 @@ public abstract class DataTable
 {
     public static readonly string FormatPath = "Tables/{0}";
 
-    public abstract Dictionary<int, DataTableData> TableData { get; }
+    public virtual Dictionary<int, DataTableData> TableData { get; protected set; }
 
     public static List<T> LoadCsv<T>(string csv)
     {
@@ -31,6 +31,12 @@ public abstract class DataTable
 
     public abstract void Load(string path);
     public abstract void Save(string path);
-
     public abstract void Set(List<string[]> data);
+
+    protected virtual TData CreateData<TData>(string[] data) where TData : DataTableData, new()
+    {
+        TData datum = new TData();
+        datum.Set(data);
+        return datum;
+    }
 }

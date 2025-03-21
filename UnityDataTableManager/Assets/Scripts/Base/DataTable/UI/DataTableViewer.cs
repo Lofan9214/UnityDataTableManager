@@ -56,14 +56,6 @@ public class DataTableViewer : MonoBehaviour
         tableView.gameObject.SetActive(false);
     }
 
-    public void SaveTable()
-    {
-        string tableName = tableDropdown.options[tableDropdown.value].text;
-        var table = DataTableManager.Get<DataTable>(tableDropdown.options[tableDropdown.value].text);
-        table.Set(currentView.GetData());
-        table.Save(tableName);
-    }
-
     private void AddDropDownOption(string name)
     {
         TMP_Dropdown.OptionData optionData = new TMP_Dropdown.OptionData();

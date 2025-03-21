@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class EventTable : DataTable
 {
@@ -37,6 +38,10 @@ public class EventTable : DataTable
             NeglectScript = int.Parse(argument[7]);
             NeglectResult = argument[8];
         }
+        public override int GetID()
+        {
+            return ID;
+        }
     }
 
     private Dictionary<int, Data> dict = new Dictionary<int, Data>();
@@ -45,6 +50,7 @@ public class EventTable : DataTable
     {
         var path = string.Format(FormatPath, fileName);
         var textAsset = Resources.Load<TextAsset>(path);
+        //var textAsset = Addressables.LoadAssetAsync<TextAsset>(path);
         var list = LoadCsv<Data>(textAsset.text);
 
         dict.Clear();
@@ -71,8 +77,6 @@ public class EventTable : DataTable
         return dict[key];
     }
 
-    public Dictionary<int, Data> GetAllData() => dict;
-
     public Data[] GetValues()
     {
         return dict.Values.ToArray();
@@ -86,15 +90,12 @@ public class EventTable : DataTable
 
     public override void Set(List<string[]> data)
     {
-        var properties = typeof(Data).GetProperties();
         var dictionary = new Dictionary<int, Data>();
-        for (int i = 0; i < data.Count; ++i)
+        foreach (var item in data)
         {
-            Data datum = new Data();
-            datum.Set(data[i]);
+            var datum = CreateData<Data>(item);
             dictionary.Add(datum.ID, datum);
         }
-
         dict = dictionary;
     }
 

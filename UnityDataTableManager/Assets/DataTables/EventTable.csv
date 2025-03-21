@@ -1,0 +1,9 @@
+ID,Type,Script,RelativeProbability,DetailedType,AcceptScript,AcceptResult,NeglectScript,NeglectResult
+100001,0,120001,1,Rescue,120002,Exit,120003,
+100002,0,120011,1,Abnormal,120012,Message,120013,
+100003,1,121001,1,Oxygen,121002,OxygenRepair,121003,OxygenAbandon
+100004,1,121011,1,Generator,121012,GeneratorRepair,121013,GeneratorAbandon
+100005,1,121021,1,Radar,121022,RadarRepair,121023,RadarAbandon
+100006,2,122001,1,Food,122002,Food#3_Energy#-2,122003,
+100007,2,122011,1,Energy,122012,Energy#3_Oxygen#-1,122013,
+100008,2,122021,1,Oxygen,122022,Oxygen#3_Energy#-1,122023,
