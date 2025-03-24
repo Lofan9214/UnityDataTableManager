@@ -9,31 +9,39 @@ using UnityEngine.UI;
 
 public class DataTableViewer : MonoBehaviour
 {
-    public TMP_Dropdown tableDropdown;
-    public DataTableView dataTableViewPrefab;
-    public Transform tableView;
+    [SerializeField]
+    private TMP_Dropdown tableDropdown;
+    [SerializeField]
+    private DataTableView dataTableViewPrefab;
+    [SerializeField]
+    private Transform tableView;
+    [SerializeField]
+    private TMP_InputField inputField;
+    [SerializeField]
+    private Toggle inputToggle;
 
     private Dictionary<string, DataTableView> views = new Dictionary<string, DataTableView>();
 
-    private DataTableView currentView;
+    public DataTableView CurrentView { get; private set; }
     private int currentIndex;
+    public string CurrentTableName
+    {
+        get
+        {
+            return tableDropdown.options[currentIndex].text;
+        }
+    }
+
 
     private void Awake()
     {
-        foreach (var table in DataTableManager.Tables)
-        {
-            SetTable(table);
-        }
-
-        tableDropdown.value = 0;
-        tableDropdown.RefreshShownValue();
-        OnDropDownChanged(0);
+        ResetTables();
     }
 
     private void SetTable(KeyValuePair<string, DataTable> table)
     {
         var dict = table.Value.TableData;
-        var dataType = dict.Values.FirstOrDefault().GetType();
+        var dataType = table.Value.DataType;
 
         var properties = dataType.GetProperties();
 
@@ -65,16 +73,16 @@ public class DataTableViewer : MonoBehaviour
 
     public void OnDropDownChanged(int index)
     {
-        if (currentView != null)
+        if (CurrentView != null)
         {
-            currentView.gameObject.SetActive(false);
+            CurrentView.gameObject.SetActive(false);
         }
         currentIndex = index;
-        currentView = views[tableDropdown.options[index].text];
-        currentView.gameObject.SetActive(true);
+        CurrentView = views[tableDropdown.options[index].text];
+        CurrentView.gameObject.SetActive(true);
     }
 
-    public void ResetTable()
+    public void ResetViewer()
     {
         tableDropdown.ClearOptions();
 
@@ -83,14 +91,51 @@ public class DataTableViewer : MonoBehaviour
             Destroy(view.Value.gameObject);
         }
 
+        ResetTables();
+    }
+
+    private void ResetTables()
+    {
+        tableDropdown.ClearOptions();
         views.Clear();
 
-        Awake();
+        foreach (var table in DataTableManager.Tables)
+        {
+            SetTable(table);
+        }
+
+        tableDropdown.value = 0;
+        tableDropdown.RefreshShownValue();
+        OnDropDownChanged(0);
     }
 
     public void AddEmptyRow()
     {
         var table = views.ElementAt(currentIndex);
         table.Value.AddRow(new string[table.Value.columnCount]);
+    }
+
+    public void OnInsert(bool isOn)
+    {
+        if (isOn)
+        {
+            inputToggle.image.color = Color.grey;
+        }
+        else
+        {
+            string text = inputField.text;
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                string csvText = text.Replace('\t', ',');
+
+                var currentTable = DataTableManager.Get<DataTable>(tableDropdown.options[currentIndex].text);
+                currentTable.LoadFromText(csvText);
+                ResetTables();
+            }
+
+            inputToggle.image.color = Color.white;
+        }
+        inputField.gameObject.SetActive(isOn);
     }
 }

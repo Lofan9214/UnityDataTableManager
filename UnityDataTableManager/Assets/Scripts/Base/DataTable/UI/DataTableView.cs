@@ -50,6 +50,7 @@ public class DataTableView : MonoBehaviour
     {
         var row = Instantiate(dataRowPrefab, cellsContent);
         row.SetCells(rowdata);
+        rows.Add(row);
     }
 
     public void AddRows(string[][] rowsData)
@@ -70,7 +71,7 @@ public class DataTableView : MonoBehaviour
 
             for (int j = 0; j < columnCount; ++j)
             {
-                datum[i] = rows[i].cells[j].CellText;
+                datum[j] = rows[i].cells[j].CellText;
                 //if (properties[j].PropertyType == typeof(int))
                 //{
                 //    properties[j].SetValue(datum, int.Parse(rows[i].cells[j].CellText));

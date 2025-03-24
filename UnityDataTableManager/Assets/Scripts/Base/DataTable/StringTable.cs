@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,19 +24,20 @@ public class StringTable : DataTable
 
     private Dictionary<int, Data> dict = new Dictionary<int, Data>();
 
-    public override void Load(string fileName)
-    {
-        var path = string.Format(FormatPath, fileName);
-        var textAsset = Resources.Load<TextAsset>(path);
-        var list = LoadCsv<Data>(textAsset.text);
+    public override Type DataType => typeof(Data);
 
+    public override void LoadFromText(string text)
+    {
+        var list = LoadCsv<Data>(text);
         dict.Clear();
+        TableData.Clear();
 
         foreach (var item in list)
         {
             if (!dict.ContainsKey(item.stringID))
             {
                 dict.Add(item.stringID, item);
+                TableData.Add(item.stringID, item);
             }
             else
             {
@@ -44,41 +46,36 @@ public class StringTable : DataTable
         }
     }
 
-    public string Get(int key)
+    public Data GetData(int key)
     {
         if (!dict.ContainsKey(key))
         {
-            return "NULL";
+            return null;
         }
-        return dict[key].line;
+        return dict[key];
     }
 
-    public override void Save(string path)
+    public Data[] GetValues()
     {
-        SaveCsv(path, dict.Values.ToList());
+        return dict.Values.ToArray();
     }
 
     public override void Set(List<string[]> data)
     {
         var dictionary = new Dictionary<int, Data>();
+        var tableData = new Dictionary<int, DataTableData>();
         foreach (var item in data)
         {
             var datum = CreateData<Data>(item);
-            dictionary.Add(datum.GetID(), datum);
+            dictionary.Add(datum.stringID, datum);
+            tableData.Add(datum.stringID, datum);
         }
         dict = dictionary;
+        TableData = tableData;
     }
 
-    public override Dictionary<int, DataTableData> TableData
+    public override string GetCsvData()
     {
-        get
-        {
-            var wrapDict = new Dictionary<int, DataTableData>();
-            foreach (var item in dict)
-            {
-                wrapDict.Add(item.Key, item.Value);
-            }
-            return wrapDict;
-        }
+        return CreateCsv(dict.Values.ToList());
     }
 }

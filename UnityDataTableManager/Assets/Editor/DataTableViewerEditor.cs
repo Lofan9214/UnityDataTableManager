@@ -2,20 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 [CustomEditor(typeof(DataTableViewer))]
 public class DataTableViewerEditor : Editor
 {
+    private const string dataTablePathFormat = "{0}/Addressables/DataTables/{1}.csv";
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
+
+        if (GUILayout.Button("Save"))
+        {
+            var viewer = target as DataTableViewer;
+            SaveTable(viewer.CurrentTableName, viewer.CurrentView);
+        }
     }
-    
-    public void SaveTable(string tablename, DataTableView view)
+
+    public void SaveTable(string tableName, DataTableView view)
     {
-        string tableName = $"Assets/Resources/Tables/{tablename}.csv";
-        var table = DataTableManager.Get<DataTable>(tablename);
+        string tablePath = string.Format(dataTablePathFormat, Application.dataPath, tableName);
+        var table = DataTableManager.Get<DataTable>(tableName);
         table.Set(view.GetData());
-        table.Save(tableName);
+        TextAsset text = new TextAsset(table.GetCsvData());
+        File.WriteAllText(tablePath, table.GetCsvData());
+        AssetDatabase.Refresh();
     }
 }

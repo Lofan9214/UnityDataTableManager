@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6300208001252258473}
-  - component: {fileID: 5896241489656331808}
+  - component: {fileID: 7416704103350150799}
   - component: {fileID: 4124646777533475149}
   - component: {fileID: 8146059956792299092}
   m_Layer: 5
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5896241489656331808
+--- !u!114 &7416704103350150799
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 965137347644d7c4f8a5e65180a54695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellPrefab: {fileID: 8002764675692231611, guid: ba05b381fda3a324e9f447022a70dcdd, type: 3}
+  cellPrefab: {fileID: 83178461328579802, guid: ba05b381fda3a324e9f447022a70dcdd, type: 3}
   cells: []
 --- !u!114 &4124646777533475149
 MonoBehaviour:
@@ -70,7 +70,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 5
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
